@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+/* "Passport book" look: warm paper, brown ink, and red / blue / green stamp inks. */
+:root {
+  --bg: #f3ead8;          /* paper */
+  --panel: #fbf6ea;       /* card stock */
+  --panel-2: #ece1c9;     /* inputs, chips, pressed paper */
+  --line: #dccaa5;        /* rules and borders */
+  --perf: #c9b48e;        /* perforation / tear line */
+  --text: #3b2f1e;        /* ink */
+  --muted: #8a6d45;       /* faded ink */
+  --accent: #a8442a;      /* red stamp ink: primary actions, routes */
+  --accent-2: #2f5d8a;    /* blue stamp ink: upcoming, links */
+  --ok: #3f7a4a;          /* green stamp ink: flown */
+  --danger: #b03a2e;
+  --on-accent: #fbf6ea;
+  --panel-hover: #fffaf0;
+  --accent-hover: #923a23;
+  --placeholder: #b09a74;
+  /* Stamp inks */
+  --ink-red: #a8442a;
+  --ink-blue: #2f5d8a;
+  --ink-green: #3f7a4a;
+  --ink-purple: #6b4a8a;
+  --ink-brown: #8a5a1f;
+  /* Map */
+  --map-land: #f1e7d2;
+  --map-water: #d6dcd3;
+  --logo-tile: #16263f;
+  --logo-gold: #d8b46a;
+  color-scheme: light;
+}
+
+/* Night: dark leather cover, cream ink, brighter stamp inks so they read on dark. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1b1713; --panel: #241f19; --panel-2: #2e271f; --line: #3d3428; --perf: #5c4d39;
+    --text: #efe4cc; --muted: #b39f7d; --accent: #e0805f; --accent-2: #86afd8; --ok: #8cc296; --danger: #ec7464;
+    --on-accent: #1b1713; --panel-hover: #2a241d; --accent-hover: #ea9374; --placeholder: #7d6c52;
+    --ink-red: #e0805f; --ink-blue: #86afd8; --ink-green: #8cc296; --ink-purple: #b79ad6; --ink-brown: #d6a868;
+    --map-land: #221d17; --map-water: #18212a; --logo-tile: #22385a; --logo-gold: #e6c27e;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1b1713; --panel: #241f19; --panel-2: #2e271f; --line: #3d3428; --perf: #5c4d39;
+  --text: #efe4cc; --muted: #b39f7d; --accent: #e0805f; --accent-2: #86afd8; --ok: #8cc296; --danger: #ec7464;
+  --on-accent: #1b1713; --panel-hover: #2a241d; --accent-hover: #ea9374; --placeholder: #7d6c52;
+  --ink-red: #e0805f; --ink-blue: #86afd8; --ink-green: #8cc296; --ink-purple: #b79ad6; --ink-brown: #d6a868;
+  --map-land: #221d17; --map-water: #18212a; --logo-tile: #22385a; --logo-gold: #e6c27e;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-panel-2: var(--panel-2);
+  --color-line: var(--line);
+  --color-perf: var(--perf);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-ok: var(--ok);
+  --color-danger: var(--danger);
+  --color-panel-hover: var(--panel-hover);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-fraunces);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+/* Dashed tear line between a boarding pass and its stub. */
+.perf-x { border-top: 1.5px dashed var(--perf); }
+.perf-y { border-left: 1.5px dashed var(--perf); }
+
+/* Ink stamp: outlined, slightly rotated, coloured per stamp via currentColor. */
+.stamp {
+  display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
+  border: 2px solid currentColor; text-align: center; line-height: 1.15;
+  font-family: var(--font-serif); text-transform: uppercase; letter-spacing: 0.04em;
+  opacity: 0.92;
+}
+
+.input {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+  color: var(--text);
+  width: 100%;
+}
+.input::placeholder { color: var(--placeholder); }
+.input:focus { outline: 2px solid var(--accent-2); outline-offset: 1px; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  border-radius: 999px; padding: 0.5rem 1rem; font-weight: 600; font-size: 0.875rem;
+  background: var(--panel); border: 1px solid var(--line); color: var(--text);
+  transition: background 0.15s, opacity 0.15s;
+}
+.btn:hover { background: var(--panel-2); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary { background: var(--accent); color: var(--on-accent); border-color: transparent; }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-danger { color: var(--danger); }
+
+.maplibregl-ctrl-attrib { font-size: 10px; background: color-mix(in srgb, var(--panel) 80%, transparent) !important; color: var(--muted); }
+.maplibregl-ctrl-attrib a { color: var(--muted) !important; }
+.maplibregl-popup-content { background: var(--panel); color: var(--text); border: 1px solid var(--line); font-size: 12px; }
+
+/* Page titles in the serif "printed" face. */
+h1 { font-family: var(--font-serif); font-weight: 500; }
