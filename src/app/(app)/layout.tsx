@@ -3,6 +3,7 @@ import { requireUser } from "@/lib/auth/session";
 import { reviewFlights } from "@/lib/data";
 import { BottomNav, TopNav } from "@/components/AppNav";
 import { LogoSvg } from "@/components/Logo";
+import { Avatar } from "@/components/Avatar";
 import { ThemeToggle, type ThemeChoice } from "@/components/ThemeToggle";
 import { cookies } from "next/headers";
 import { Suspense } from "react";
@@ -24,7 +25,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
           <TopNav reviewCount={reviewCount} />
           <div className="flex items-center gap-2 text-xs text-muted">
             <ThemeToggle initial={theme} />
-            {user.image ? <img src={user.image} alt="" className="h-7 w-7 rounded-full" referrerPolicy="no-referrer" /> : null}
+            <Avatar src={user.image} name={user.name} email={user.email} />
             <span className="hidden md:inline">{user.email}</span>
           </div>
         </div>
