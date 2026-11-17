@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function initials(name: string | null | undefined, email: string) {
   const parts = (name ?? "").trim().split(/\s+/).filter(Boolean);
@@ -8,14 +8,31 @@ function initials(name: string | null | undefined, email: string) {
   return letters.toUpperCase();
 }
 
-/** Your Google photo, or ink-stamp initials if there is none or it fails to load. */
+/**
+ * Ink-stamp initials, replaced by your Google photo only after the photo has actually loaded.
+ * (Rendering the <img> straight away showed a broken image when the photo failed before the page's
+ * JavaScript was ready to notice.)
+ */
 export function Avatar({ src, name, email }: { src: string | null; name: string | null; email: string }) {
-  const [failed, setFailed] = useState(false);
-  if (src && !failed) {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img src={src} alt="" className="h-7 w-7 rounded-full" referrerPolicy="no-referrer" onError={() => setFailed(true)} />
-    );
+  const [loaded, setLoaded] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!src) return;
+    let cancelled = false;
+    const probe = new Image();
+    probe.referrerPolicy = "no-referrer";
+    probe.onload = () => {
+      if (!cancelled && probe.naturalWidth > 0) setLoaded(src);
+    };
+    probe.src = src;
+    return () => {
+      cancelled = true;
+    };
+  }, [src]);
+
+  if (loaded && loaded === src) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={loaded} alt="" className="h-7 w-7 rounded-full" referrerPolicy="no-referrer" />;
   }
   return (
     <span
