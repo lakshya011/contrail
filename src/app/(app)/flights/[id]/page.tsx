@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { requireUser } from "@/lib/auth/session";
-import { getAliases, getFlight } from "@/lib/data";
+import { getAliases, getFlight, type FlightWithAirports } from "@/lib/data";
 import { describeSeats } from "@/lib/seats";
 import { displayFlightNumber } from "@/lib/ingest/types";
 import { formatDate, formatDuration, timeOf } from "@/lib/time";
@@ -52,7 +52,7 @@ export default async function FlightPage({ params }: PageProps<"/flights/[id]">)
           <div className="mt-5 grid grid-cols-[1fr_auto_1fr] items-center gap-4">
             <div>
               <div className="font-serif text-5xl tracking-tight sm:text-6xl">{f.depIata}</div>
-              <div className="text-sm text-muted">{f.dep?.name ?? "Unknown airport"}</div>
+              <AirportLabel airport={f.dep} />
               <div className="mt-2 font-mono text-2xl tabular">{timeOf(f.schedDepLocal) ?? "--:--"}</div>
             </div>
             <div className="flex w-20 flex-col items-center gap-1 text-xs text-muted sm:w-48 md:w-72">
@@ -68,7 +68,7 @@ export default async function FlightPage({ params }: PageProps<"/flights/[id]">)
             </div>
             <div className="text-right">
               <div className="font-serif text-5xl tracking-tight sm:text-6xl">{f.arrIata}</div>
-              <div className="text-sm text-muted">{f.arr?.name ?? "Unknown airport"}</div>
+              <AirportLabel airport={f.arr} align="right" />
               <div className="mt-2 font-mono text-2xl tabular">{timeOf(f.schedArrLocal) ?? "--:--"}</div>
             </div>
           </div>
@@ -90,7 +90,7 @@ export default async function FlightPage({ params }: PageProps<"/flights/[id]">)
         {facts.map(([k, v]) => (
           <div key={k} className="card p-4">
             <div className="text-xs text-muted">{k}</div>
-            <div className="mt-1 truncate font-medium">{v || "—"}</div>
+            <div className="mt-1 break-words font-medium">{v || "—"}</div>
           </div>
         ))}
       </div>
@@ -131,6 +131,18 @@ export default async function FlightPage({ params }: PageProps<"/flights/[id]">)
           <span className="ml-3 text-xs text-muted">It stays hidden even if the email is read again.</span>
         </form>
       </details>
+    </div>
+  );
+}
+
+/** City first (short enough for a phone), then the airport's full name in small type underneath. */
+function AirportLabel({ airport, align = "left" }: { airport: FlightWithAirports["dep"]; align?: "left" | "right" }) {
+  if (!airport) return <div className="text-sm text-muted">Unknown airport</div>;
+  const city = airport.city?.trim();
+  return (
+    <div className={align === "right" ? "ml-auto max-w-[11rem] sm:max-w-none" : "max-w-[11rem] sm:max-w-none"}>
+      <div className="truncate text-sm font-medium">{city || airport.name}</div>
+      {city && city !== airport.name && <div className="line-clamp-2 text-xs leading-snug text-muted">{airport.name}</div>}
     </div>
   );
 }

@@ -2,6 +2,12 @@ import Link from "next/link";
 import { requireUser } from "@/lib/auth/session";
 import { flightYears, listFlights } from "@/lib/data";
 import { FlightCard } from "@/components/FlightCard";
+import { FlightYearSection } from "@/components/FlightYearSection";
+import { OlderYears, type YearSummary } from "@/components/OlderYears";
+import { loadFlightYear } from "./year-actions";
+
+/** Past flights rendered straight away; older whole years load as you scroll (searches show everything). */
+const FIRST_VIEW_PAST_FLIGHTS = 16;
 
 export default async function FlightsPage({ searchParams }: PageProps<"/">) {
   const user = await requireUser();
@@ -16,6 +22,18 @@ export default async function FlightsPage({ searchParams }: PageProps<"/">) {
   for (const f of past) {
     const y = f.depDate.slice(0, 4);
     byYear.set(y, [...(byYear.get(y) ?? []), f]);
+  }
+  // Whole years until enough flights are on screen; the rest are summarised and fetched on demand.
+  const firstYears: [string, typeof past][] = [];
+  const laterYears: YearSummary[] = [];
+  let shown = 0;
+  for (const [y, fs] of byYear) {
+    if (q || year || shown < FIRST_VIEW_PAST_FLIGHTS) {
+      firstYears.push([y, fs]);
+      shown += fs.length;
+    } else {
+      laterYears.push({ year: y, count: fs.length, flown: fs.filter((f) => f.status === "flown").length });
+    }
   }
 
   return (
@@ -52,17 +70,8 @@ export default async function FlightsPage({ searchParams }: PageProps<"/">) {
         </section>
       )}
 
-      {[...byYear.entries()].map(([y, fs]) => (
-        <section key={y}>
-          <div className="mb-3 flex items-baseline justify-between">
-            <h2 className="text-xl font-semibold">{y}</h2>
-            <Link href={`/passport?year=${y}`} className="text-xs text-muted hover:text-accent">
-              {fs.filter((f) => f.status === "flown").length} flown · Passport →
-            </Link>
-          </div>
-          <div className="grid gap-3 md:grid-cols-2">{fs.map((f) => <FlightCard key={f.id} f={f} units={user.units} />)}</div>
-        </section>
-      ))}
+      {firstYears.map(([y, fs]) => <FlightYearSection key={y} year={y} flights={fs} units={user.units} />)}
+      {laterYears.length > 0 && <OlderYears years={laterYears} loadYearAction={loadFlightYear} />}
     </div>
   );
 }

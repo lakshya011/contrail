@@ -40,12 +40,12 @@ export function FlightCard({ f, units }: { f: FlightWithAirports; units: string 
           <span className="shrink-0 normal-case tracking-normal">{formatDate(f.depDate)}</span>
         </div>
 
-        <div className="mt-2 grid grid-cols-[1fr_auto_1fr] items-end gap-3">
+        <div className="mt-2 grid grid-cols-[1fr_auto_1fr] items-end gap-2 sm:gap-3">
           <div className="min-w-0">
-            <div className="font-serif text-4xl leading-none">{f.depIata}</div>
+            <div className="font-serif text-[2rem] leading-none sm:text-4xl">{f.depIata}</div>
             <div className="mt-1 truncate text-xs text-muted">{f.dep?.city ?? f.dep?.name ?? "Unknown"}</div>
           </div>
-          <div className="flex w-20 flex-col items-center pb-5 text-[11px] text-muted sm:w-28">
+          <div className="flex w-16 flex-col items-center pb-5 text-[11px] text-muted sm:w-28">
             <span>{formatDuration(f.durationMin)}</span>
             <div className="relative my-1.5 w-full border-t border-dashed border-perf">
               <svg viewBox="0 0 24 24" className="absolute -top-[9px] left-1/2 h-4 w-4 -translate-x-1/2 rotate-90 bg-panel text-accent group-hover:bg-panel-hover" fill="currentColor" aria-hidden>
@@ -55,7 +55,7 @@ export function FlightCard({ f, units }: { f: FlightWithAirports; units: string 
             <span>{fmtDistance(f.distanceKm, units)}</span>
           </div>
           <div className="min-w-0 text-right">
-            <div className="font-serif text-4xl leading-none">{f.arrIata}</div>
+            <div className="font-serif text-[2rem] leading-none sm:text-4xl">{f.arrIata}</div>
             <div className="mt-1 truncate text-xs text-muted">{f.arr?.city ?? f.arr?.name ?? "Unknown"}</div>
           </div>
         </div>
